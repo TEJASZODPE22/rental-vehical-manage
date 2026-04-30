@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveEase — Vehicle Rental</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#1557FF;
+  --blue-dark:#0D3FCC;
+  --blue-light:#EEF2FF;
+  --orange:#FF6B2B;
+  --text:#0D1117;
+  --text-mid:#4A5568;
+  --text-light:#8896A4;
+  --border:#E8ECF0;
+  --bg:#F7F9FC;
+  --white:#FFFFFF;
+  --radius:12px;
+  --shadow:0 4px 24px rgba(21,87,255,0.10);
+  --shadow-lg:0 16px 48px rgba(21,87,255,0.14);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#CBD5E0;border-radius:3px}
+
+/* ========== NAVBAR ========== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(232,236,240,0.8);
+  padding:0 5%;height:72px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:box-shadow 0.3s;
+}
+nav.scrolled{box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo-icon{
+  width:38px;height:38px;background:var(--blue);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.nav-logo-text{font-size:20px;font-weight:800;color:var(--text)}
+.nav-logo-text span{color:var(--blue)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:14px;font-weight:500;color:var(--text-mid);transition:color 0.2s}
+.nav-links a:hover{color:var(--blue)}
+.nav-links a.active{color:var(--blue)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.btn-outline{padding:9px 20px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;background:transparent;color:var(--text);transition:all 0.2s}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-solid{padding:10px 22px;background:var(--blue);border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;color:#fff;transition:all 0.2s}
+.btn-solid:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 6px 16px rgba(21,87,255,0.3)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:all 0.3s}
+
+/* ========== HERO ========== */
+.hero{
+  min-height:100vh;padding:120px 5% 60px;
+  background:linear-gradient(160deg,#F0F4FF 0%,#FFFFFF 50%,#FFF5F0 100%);
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;right:-200px;top:-200px;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(21,87,255,0.06) 0%,transparent 70%);
+}
+.hero::after{
+  content:'';position:absolute;left:-100px;bottom:-100px;
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,43,0.06) 0%,transparent 70%);
+}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--blue-light);color:var(--blue);padding:6px 14px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(40px,5vw,62px);line-height:1.12;font-weight:800;color:var(--text);margin-bottom:20px}
+.hero h1 span{color:var(--blue);position:relative}
+.hero h1 span::after{content:'';position:absolute;left:0;bottom:-4px;width:100%;height:3px;background:var(--orange);border-radius:2px}
+.hero-desc{font-size:17px;line-height:1.7;color:var(--text-mid);margin-bottom:36px;max-width:480px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px}
+.btn-hero{padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.25s;border:none}
+.btn-hero-primary{background:var(--blue);color:#fff;box-shadow:0 8px 24px rgba(21,87,255,0.3)}
+.btn-hero-primary:hover{background:var(--blue-dark);transform:translateY(-2px);box-shadow:0 12px 32px rgba(21,87,255,0.4)}
+.btn-hero-secondary{background:transparent;color:var(--text);border:2px solid var(--border)}
+.btn-hero-secondary:hover{border-color:var(--blue);color:var(--blue)}
+.hero-stats{display:flex;gap:36px}
+.hero-stat-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--text)}
+.hero-stat-label{font-size:12px;color:var(--text-light);margin-top:2px}
+.hero-img-wrap{position:relative;z-index:1}
+.hero-car{
+  width:100%;border-radius:24px;overflow:hidden;
+  background:linear-gradient(135deg,#1557FF,#0D3FCC);
+  padding:40px;display:flex;align-items:center;justify-content:center;
+  font-size:140px;line-height:1;text-align:center;
+  box-shadow:var(--shadow-lg);position:relative;
+}
+.hero-car::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%,rgba(255,255,255,0.15),transparent 60%);
+}
+.floating-card{
+  position:absolute;background:white;border-radius:14px;padding:14px 18px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.12);
+  animation:float 3s ease-in-out infinite;
+}
+.floating-card.card1{bottom:-20px;left:-20px;animation-delay:0s}
+.floating-card.card2{top:-16px;right:-10px;animation-delay:1.5s}
+.fc-label{font-size:11px;color:var(--text-light);margin-bottom:4px}
+.fc-value{font-size:15px;font-weight:700}
+.fc-sub{font-size:11px;color:var(--text-light)}
+.fc-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;margin-right:5px}
+.fc-dot.green{background:#22C55E}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ========== SEARCH BOOKING BAR ========== */
+.booking-section{background:var(--white);padding:0 5%;position:relative;z-index:10;margin-top:-30px}
+.booking-bar{
+  background:white;border-radius:16px;box-shadow:0 8px 40px rgba(21,87,255,0.12);
+  padding:28px 32px;border:1px solid var(--border);
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:16px;align-items:end;
+}
+.bfield label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-light);display:block;margin-bottom:8px}
+.bfield-inner{display:flex;align-items:center;gap:10px;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;transition:border-color 0.2s;cursor:pointer}
+.bfield-inner:hover,.bfield-inner:focus-within{border-color:var(--blue)}
+.bfield-icon{font-size:18px;flex-shrink:0}
+.bfield-inner input,.bfield-inner select{
+  border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:14px;font-weight:500;color:var(--text);background:transparent;width:100%;
+}
+.bfield-inner select option{color:var(--text)}
+.btn-search{
+  padding:13px 28px;background:var(--blue);color:white;border:none;border-radius:10px;
+  font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;
+  white-space:nowrap;transition:all 0.2s;box-shadow:0 4px 16px rgba(21,87,255,0.25);
+}
+.btn-search:hover{background:var(--blue-dark);transform:translateY(-1px)}
+
+/* ========== SECTION COMMON ========== */
+section{padding:80px 5%}
+.section-tag{display:inline-flex;align-items:center;gap:8px;background:var(--blue-light);color:var(--blue);padding:5px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,42px);font-weight:800;line-height:1.2;margin-bottom:14px}
+.section-sub{font-size:16px;color:var(--text-mid);line-height:1.6;max-width:540px}
+
+/* ========== WHY US ========== */
+.why-section{background:var(--bg)}
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:52px}
+.why-card{background:white;border-radius:16px;padding:28px;border:1px solid var(--border);transition:all 0.3s;position:relative;overflow:hidden}
+.why-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:0;background:var(--blue);border-radius:0 0 4px 0;transition:height 0.3s}
+.why-card:hover{box-shadow:var(--shadow);transform:translateY(-4px)}
+.why-card:hover::before{height:100%}
+.why-icon{width:52px;height:52px;border-radius:12px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px}
+.why-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.why-desc{font-size:13px;color:var(--text-mid);line-height:1.6}
+
+/* ========== FLEET ========== */
+.fleet-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:16px}
+.fleet-filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{padding:8px 20px;border-radius:100px;border:1.5px solid var(--border);font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;background:white;color:var(--text-mid);transition:all 0.2s}
+.filter-btn.active,.filter-btn:hover{background:var(--blue);color:white;border-color:var(--blue)}
+.fleet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.car-card{background:white;border-radius:16px;border:1px solid var(--border);overflow:hidden;transition:all 0.3s;cursor:pointer}
+.car-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-6px)}
+.car-img{background:linear-gradient(135deg,#F0F4FF,#EEF2FF);height:180px;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative;overflow:hidden}
+.car-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,rgba(240,244,255,0.8),transparent)}
+.car-badge{position:absolute;top:12px;left:12px;padding:4px 10px;border-radius:100px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.badge-avail{background:#DCFCE7;color:#16A34A}
+.badge-hot{background:#FEE2E2;color:#DC2626}
+.badge-new{background:#EEF2FF;color:var(--blue)}
+.car-body{padding:20px}
+.car-name{font-size:17px;font-weight:700;margin-bottom:4px}
+.car-type{font-size:12px;color:var(--text-light);margin-bottom:14px}
+.car-specs{display:flex;gap:16px;margin-bottom:16px}
+.car-spec{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-mid)}
+.car-footer{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border)}
+.car-price{font-size:22px;font-weight:800;color:var(--text)}
+.car-price small{font-size:12px;font-weight:400;color:var(--text-light)}
+.btn-book{padding:8px 20px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.2s}
+.btn-book:hover{background:var(--blue-dark);transform:translateY(-1px)}
+
+/* ========== HOW IT WORKS ========== */
+.how-section{background:var(--bg)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:52px;position:relative}
+.steps::before{content:'';position:absolute;top:36px;left:10%;right:10%;height:2px;background:repeating-linear-gradient(to right,var(--blue) 0,var(--blue) 10px,transparent 10px,transparent 20px);z-index:0}
+.step{text-align:center;position:relative;z-index:1}
+.step-num{
+  width:72px;height:72px;border-radius:50%;background:white;border:2px solid var(--blue);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+  font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--blue);
+  box-shadow:0 4px 16px rgba(21,87,255,0.15);position:relative;
+}
+.step-num::after{content:attr(data-icon);position:absolute;bottom:-6px;right:-6px;width:28px;height:28px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px}
+.step-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.step-desc{font-size:13px;color:var(--text-mid);line-height:1.6}
+
+/* ========== PROMO BANNER ========== */
+.promo{
+  background:linear-gradient(120deg,#1557FF 0%,#0D3FCC 100%);
+  border-radius:24px;margin:0 5%;padding:60px;
+  display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;
+  position:relative;overflow:hidden;
+}
+.promo::before{content:'🚗';position:absolute;right:250px;top:-20px;font-size:180px;opacity:0.08;transform:rotate(-15deg)}
+.promo-title{font-family:'Playfair Display',serif;font-size:clamp(24px,3vw,38px);font-weight:800;color:white;margin-bottom:12px}
+.promo-desc{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.6;max-width:480px;margin-bottom:28px}
+.promo-tag{display:inline-block;background:var(--orange);color:white;padding:5px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.promo-img{font-size:100px;text-align:center;filter:drop-shadow(0 20px 40px rgba(0,0,0,0.3))}
+.btn-promo{padding:14px 32px;background:white;color:var(--blue);border:none;border-radius:10px;font-size:15px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.2s}
+.btn-promo:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+
+/* ========== TESTIMONIALS ========== */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px}
+.testi-card{background:white;border-radius:16px;padding:28px;border:1px solid var(--border);transition:all 0.3s}
+.testi-card:hover{box-shadow:var(--shadow);transform:translateY(-4px)}
+.testi-stars{color:#FBBF24;font-size:14px;margin-bottom:14px;letter-spacing:2px}
+.testi-text{font-size:14px;line-height:1.7;color:var(--text-mid);margin-bottom:20px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white}
+.testi-name{font-size:14px;font-weight:700}
+.testi-loc{font-size:12px;color:var(--text-light)}
+
+/* ========== COUNTER ========== */
+.counter-section{background:var(--blue);padding:60px 5%}
+.counter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+.counter-num{font-family:'Playfair Display',serif;font-size:48px;font-weight:800;color:white}
+.counter-label{font-size:14px;color:rgba(255,255,255,0.7);margin-top:6px}
+
+/* ========== FAQ ========== */
+.faq-section{background:var(--bg)}
+.faq-wrap{max-width:720px;margin:52px auto 0}
+.faq-item{background:white;border-radius:12px;margin-bottom:12px;border:1px solid var(--border);overflow:hidden}
+.faq-q{
+  padding:20px 24px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;font-size:15px;font-weight:600;transition:color 0.2s;
+}
+.faq-q:hover{color:var(--blue)}
+.faq-icon{width:28px;height:28px;border-radius:50%;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;transition:transform 0.3s;flex-shrink:0}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s}
+.faq-a-inner{padding:0 24px 20px;font-size:14px;color:var(--text-mid);line-height:1.7}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--blue);color:white}
+.faq-item.open .faq-a{max-height:200px}
+
+/* ========== FOOTER ========== */
+footer{background:#0D1117;color:rgba(255,255,255,0.8);padding:64px 5% 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand{font-size:22px;font-weight:800;color:white;margin-bottom:14px}
+.footer-brand span{color:var(--blue)}
+.footer-desc{font-size:13px;line-height:1.7;color:rgba(255,255,255,0.5);margin-bottom:24px}
+.social-links{display:flex;gap:10px}
+.social-btn{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:16px;transition:background 0.2s;cursor:pointer}
+.social-btn:hover{background:var(--blue)}
+.footer-col-title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:18px}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-links a{font-size:13px;color:rgba(255,255,255,0.6);transition:color 0.2s}
+.footer-links a:hover{color:white}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.4)}
+.footer-badges{display:flex;gap:10px}
+.footer-badge{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:4px 12px;border-radius:6px;font-size:11px;color:rgba(255,255,255,0.5)}
+
+/* ========== MOBILE NAV ========== */
+.mobile-menu{display:none;position:fixed;top:72px;left:0;right:0;background:white;border-bottom:1px solid var(--border);padding:20px 5%;z-index:998;flex-direction:column;gap:16px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:15px;font-weight:500;color:var(--text-mid);padding:8px 0;border-bottom:1px solid var(--border)}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr;text-align:center;padding-bottom:80px}
+  .hero-desc{margin:0 auto 36px}
+  .hero-cta{justify-content:center}
+  .hero-stats{justify-content:center}
+  .hero-img-wrap{display:none}
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+  .fleet-grid{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .steps::before{display:none}
+  .testi-grid{grid-template-columns:1fr}
+  .counter-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .booking-bar{grid-template-columns:1fr 1fr}
+  .promo{grid-template-columns:1fr}
+  .promo-img{display:none}
+}
+@media(max-width:640px){
+  .nav-links,.nav-actions{display:none}
+  .hamburger{display:flex}
+  .why-grid{grid-template-columns:1fr}
+  .fleet-grid{grid-template-columns:1fr}
+  .booking-bar{grid-template-columns:1fr;padding:20px}
+  .counter-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .promo{padding:32px 24px}
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeUp 0.6s ease both}
+.d1{animation-delay:0.1s}.d2{animation-delay:0.2s}.d3{animation-delay:0.3s}.d4{animation-delay:0.4s}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">🚗</div>
+    <div class="nav-logo-text">Drive<span>Ease</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="#fleet" class="active">Fleet</a>
+    <a href="#how">How it Works</a>
+    <a href="#why">Why Us</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-outline" onclick="showLogin()">Log In</button>
+    <button class="btn-solid" onclick="showLogin()">Get Started</button>
+  </div>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#fleet" onclick="toggleMenu()">Fleet</a>
+  <a href="#how" onclick="toggleMenu()">How it Works</a>
+  <a href="#why" onclick="toggleMenu()">Why Us</a>
+  <a href="#faq" onclick="toggleMenu()">FAQ</a>
+  <a href="#" onclick="toggleMenu()">Log In</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div>
+    <div class="hero-tag animate d1">🏆 India's #1 Vehicle Rental Platform</div>
+    <h1 class="animate d2">Rent the Perfect <span>Ride</span> for Every Journey</h1>
+    <p class="hero-desc animate d3">From quick city hops to long road trips — choose from our premium fleet of 100+ verified vehicles at unbeatable daily rates. No hidden charges, full insurance included.</p>
+    <div class="hero-cta animate d4">
+      <button class="btn-hero btn-hero-primary" onclick="document.getElementById('fleet').scrollIntoView({behavior:'smooth'})">Browse Fleet 🚗</button>
+      <button class="btn-hero btn-hero-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">▶ How it Works</button>
+    </div>
+    <div class="hero-stats animate d4">
+      <div><div class="hero-stat-num">100+</div><div class="hero-stat-label">Vehicles</div></div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div><div class="hero-stat-num">5K+</div><div class="hero-stat-label">Happy Customers</div></div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div><div class="hero-stat-num">4.9⭐</div><div class="hero-stat-label">Rating</div></div>
+    </div>
+  </div>
+  <div class="hero-img-wrap">
+    <div class="hero-car">
+      🚘
+      <div class="floating-card card1">
+        <div class="fc-label"><span class="fc-dot green"></span>Available Now</div>
+        <div class="fc-value">Honda City</div>
+        <div class="fc-sub">₹2,500/day</div>
+      </div>
+      <div class="floating-card card2">
+        <div class="fc-label">⭐ Top Rated</div>
+        <div class="fc-value">4.9 / 5.0</div>
+        <div class="fc-sub">From 2,800+ reviews</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING BAR -->
+<div class="booking-section">
+  <div class="booking-bar">
+    <div class="bfield">
+      <label>📍 Pickup Location</label>
+      <div class="bfield-inner">
+        <div class="bfield-icon">🏙️</div>
+        <select>
+          <option>Latur, Maharashtra</option>
+          <option>Pune, Maharashtra</option>
+          <option>Mumbai, Maharashtra</option>
+          <option>Aurangabad, Maharashtra</option>
+          <option>Nagpur, Maharashtra</option>
+        </select>
+      </div>
+    </div>
+    <div class="bfield">
+      <label>📅 Pickup Date</label>
+      <div class="bfield-inner">
+        <div class="bfield-icon">🗓️</div>
+        <input type="date" value="2026-05-01">
+      </div>
+    </div>
+    <div class="bfield">
+      <label>📅 Return Date</label>
+      <div class="bfield-inner">
+        <div class="bfield-icon">🗓️</div>
+        <input type="date" value="2026-05-04">
+      </div>
+    </div>
+    <div class="bfield">
+      <label>🚗 Vehicle Type</label>
+      <div class="bfield-inner">
+        <div class="bfield-icon">🚘</div>
+        <select>
+          <option>All Types</option>
+          <option>Hatchback</option>
+          <option>Sedan</option>
+          <option>SUV</option>
+          <option>Luxury</option>
+          <option>Van / MPV</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-search" onclick="searchCars()">🔍 Search</button>
+  </div>
+</div>
+
+<!-- WHY US -->
+<section class="why-section" id="why">
+  <div style="text-align:center">
+    <div class="section-tag">Why DriveEase</div>
+    <h2 class="section-title">Trusted by Thousands Across India</h2>
+    <p class="section-sub" style="margin:0 auto">We're not just a rental company — we're your travel partner committed to safety, comfort, and value.</p>
+  </div>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">✅</div>
+      <div class="why-title">100% Verified Fleet</div>
+      <div class="why-desc">Every vehicle is thoroughly inspected, sanitized, and insured before each rental. Your safety is our top priority.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">💰</div>
+      <div class="why-title">No Hidden Charges</div>
+      <div class="why-desc">Transparent pricing with no surprise fees. What you see during booking is exactly what you pay.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">📞</div>
+      <div class="why-title">24/7 Roadside Support</div>
+      <div class="why-desc">Round-the-clock customer support and emergency roadside assistance anywhere across the country.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">⚡</div>
+      <div class="why-title">Instant Confirmation</div>
+      <div class="why-desc">Book in under 2 minutes and get instant confirmation via SMS and email. No waiting, no hassle.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FLEET -->
+<section id="fleet" style="background:white">
+  <div class="fleet-header">
+    <div>
+      <div class="section-tag">Our Fleet</div>
+      <h2 class="section-title" style="margin-bottom:0">Choose Your Perfect Ride</h2>
+    </div>
+    <div class="fleet-filters">
+      <button class="filter-btn active" onclick="filterFleet(this,'all')">All</button>
+      <button class="filter-btn" onclick="filterFleet(this,'hatchback')">Hatchback</button>
+      <button class="filter-btn" onclick="filterFleet(this,'sedan')">Sedan</button>
+      <button class="filter-btn" onclick="filterFleet(this,'suv')">SUV</button>
+      <button class="filter-btn" onclick="filterFleet(this,'luxury')">Luxury</button>
+    </div>
+  </div>
+  <div class="fleet-grid" id="fleetGrid"></div>
+  <div style="text-align:center;margin-top:40px">
+    <button class="btn-hero btn-hero-secondary" style="font-size:14px;padding:12px 28px">View All 100+ Vehicles →</button>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div style="text-align:center">
+    <div class="section-tag">Process</div>
+    <h2 class="section-title">Rent a Car in 4 Easy Steps</h2>
+    <p class="section-sub" style="margin:0 auto">Getting your rental vehicle is as simple as ever. From booking to keys — in minutes.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num" data-icon="🔍">01</div>
+      <div class="step-title">Search & Choose</div>
+      <div class="step-desc">Browse our verified fleet, filter by category, pickup date, and location to find your ideal vehicle.</div>
+    </div>
+    <div class="step">
+      <div class="step-num" data-icon="📋">02</div>
+      <div class="step-title">Book Online</div>
+      <div class="step-desc">Fill in your details, upload your license, and confirm your booking in under 2 minutes.</div>
+    </div>
+    <div class="step">
+      <div class="step-num" data-icon="💳">03</div>
+      <div class="step-title">Pay Securely</div>
+      <div class="step-desc">Pay via UPI, card, or cash. Get instant booking confirmation and e-receipt on your phone.</div>
+    </div>
+    <div class="step">
+      <div class="step-num" data-icon="🗝️">04</div>
+      <div class="step-title">Pick Up & Drive</div>
+      <div class="step-desc">Collect your vehicle at the pickup point. Complete vehicle inspection, grab your keys, and go!</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO BANNER -->
+<div class="promo">
+  <div>
+    <div class="promo-tag">Limited Time Offer</div>
+    <h2 class="promo-title">First Ride? Get 20% Off Your Booking!</h2>
+    <p class="promo-desc">New to DriveEase? Use code <strong>DRIVE20</strong> at checkout and enjoy 20% off on your first rental. Valid for bookings above ₹2,000. Don't miss it!</p>
+    <button class="btn-promo" onclick="showLogin()">Claim Offer Now →</button>
+  </div>
+  <div class="promo-img">🏎️</div>
+</div>
+
+<!-- COUNTERS -->
+<div class="counter-section">
+  <div class="counter-grid">
+    <div><div class="counter-num" id="c1">0</div><div class="counter-label">Vehicles in Fleet</div></div>
+    <div><div class="counter-num" id="c2">0</div><div class="counter-label">Happy Customers</div></div>
+    <div><div class="counter-num" id="c3">0</div><div class="counter-label">Cities Covered</div></div>
+    <div><div class="counter-num" id="c4">0</div><div class="counter-label">Successful Rentals</div></div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section style="background:white">
+  <div style="text-align:center">
+    <div class="section-tag">Reviews</div>
+    <h2 class="section-title">What Our Customers Say</h2>
+    <p class="section-sub" style="margin:0 auto">Thousands of satisfied customers trust DriveEase for their travel needs.</p>
+  </div>
+  <div class="testi-grid" id="testiGrid"></div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div style="text-align:center">
+    <div class="section-tag">FAQ</div>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+  </div>
+  <div class="faq-wrap" id="faqWrap"></div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Drive<span>Ease</span></div>
+      <p class="footer-desc">Your trusted vehicle rental partner across Maharashtra. Premium fleet, transparent pricing, and 24/7 support — every journey made better.</p>
+      <div class="social-links">
+        <div class="social-btn">📘</div>
+        <div class="social-btn">📸</div>
+        <div class="social-btn">🐦</div>
+        <div class="social-btn">▶️</div>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a href="#">About Us</a>
+        <a href="#">Our Fleet</a>
+        <a href="#">Careers</a>
+        <a href="#">Press</a>
+        <a href="#">Blog</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <div class="footer-links">
+        <a href="#">Self Drive</a>
+        <a href="#">Chauffeur Drive</a>
+        <a href="#">Corporate Rental</a>
+        <a href="#">Wedding Cars</a>
+        <a href="#">Airport Transfer</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-links">
+        <a href="tel:+919876543210">📞 +91 98XXXXXXXX</a>
+        <a href="mailto:info@driveease.in">✉️ mh@2gmail.com</a>
+        <a href="#">📍 Maharashtra INDIA</a>
+        <a href="#">🕐 Mon–Sun: 6AM–10PM</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 DriveEase Vehicle Rentals Pvt. Ltd. · All rights reserved.</div>
+    <div class="footer-badges">
+      <div class="footer-badge">Privacy Policy</div>
+      <div class="footer-badge">Terms of Service</div>
+      <div class="footer-badge">GST: 27ABCDE1234F1Z5</div>
+    </div>
+  </div>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:20px;padding:40px;width:420px;max-width:90%;position:relative;animation:fadeUp 0.3s ease">
+    <button onclick="document.getElementById('loginModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#8896A4">✕</button>
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:36px;margin-bottom:10px">🚗</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:800;margin-bottom:6px">Welcome Back</h3>
+      <p style="font-size:13px;color:var(--text-mid)">Sign in to manage your rentals</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <label style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-light);display:block;margin-bottom:6px">Email / Phone</label>
+        <input type="text" placeholder="Enter email or phone" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;outline:none">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-light);display:block;margin-bottom:6px">Password</label>
+        <input type="password" placeholder="Enter password" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;outline:none">
+      </div>
+      <button class="btn-solid" style="width:100%;padding:14px;font-size:15px;border-radius:10px;margin-top:4px">Sign In</button>
+    </div>
+    <p style="text-align:center;font-size:13px;color:var(--text-mid);margin-top:20px">Don't have an account? <a href="#" style="color:var(--blue);font-weight:700">Sign Up Free</a></p>
+  </div>
+</div>
+
+<script>
+// Data
+const fleet = [
+  { name:'Maruti Swift', type:'Hatchback', cat:'hatchback', emoji:'🚗', price:1200, seats:5, fuel:'Petrol', trans:'Manual', km:'22', badge:'Available', badgeClass:'badge-avail' },
+  { name:'Honda City', type:'Sedan', cat:'sedan', emoji:'🚙', price:2500, seats:5, fuel:'Petrol', trans:'Auto', km:'18', badge:'Popular', badgeClass:'badge-hot' },
+  { name:'Hyundai Creta', type:'SUV', cat:'suv', emoji:'🚘', price:2800, seats:5, fuel:'Diesel', trans:'Auto', km:'17', badge:'Available', badgeClass:'badge-avail' },
+  { name:'Toyota Innova', type:'MPV', cat:'suv', emoji:'🚐', price:4000, seats:7, fuel:'Diesel', trans:'Manual', km:'15', badge:'Available', badgeClass:'badge-avail' },
+  { name:'BMW 3 Series', type:'Luxury Sedan', cat:'luxury', emoji:'🏎️', price:8000, seats:5, fuel:'Petrol', trans:'Auto', km:'14', badge:'New', badgeClass:'badge-new' },
+  { name:'Tata Nexon EV', type:'Electric SUV', cat:'suv', emoji:'⚡', price:3200, seats:5, fuel:'Electric', trans:'Auto', km:'312km', badge:'Available', badgeClass:'badge-avail' },
+];
+
+const testimonials = [
+  { stars:'★★★★★', text:'DriveEase made my weekend trip to Ajanta so seamless! The car was clean, fully fueled, and the process was super fast. Will definitely rent again!', name:'Rahul Kumar', loc:'Latur, MH', color:'#1557FF', init:'RK' },
+  { stars:'★★★★★', text:'Booked the Innova for a family trip. Excellent condition, great mileage, and the staff were so professional. Best rental experience I have had!', name:'Priya Sharma', loc:'Pune, MH', color:'#16A34A', init:'PS' },
+  { stars:'★★★★☆', text:'Transparent pricing, no hidden costs, and the pickup was right on time. The app made tracking the booking super easy. Highly recommended!', name:'Amit Mehra', loc:'Aurangabad, MH', color:'#DC2626', init:'AM' },
+];
+
+const faqs = [
+  { q:'What documents do I need to rent a vehicle?', a:'You need a valid driving licence (minimum 1 year old), a government-issued photo ID (Aadhaar/Passport), and a credit/debit card. For luxury vehicles, additional verification may be required.' },
+  { q:'Is fuel included in the rental price?', a:'We follow a Full-to-Full fuel policy. You pick up the vehicle with a full tank and return it full. Any fuel used during your rental period is your responsibility.' },
+  { q:'What happens if I return the vehicle late?', a:'Late returns attract a fee of ₹500 per hour beyond the agreed return time. If you need an extension, please contact us at least 2 hours before the return time.' },
+  { q:'Is insurance included in the rental?', a:'Yes, basic insurance is included in all rentals. We recommend our comprehensive coverage add-on for complete peace of mind, available at checkout.' },
+  { q:'Can I cancel or modify my booking?', a:'Free cancellation up to 24 hours before pickup. Cancellations within 24 hours attract a 50% charge. Modifications to dates or vehicle are subject to availability.' },
+];
+
+function renderFleet(filter='all') {
+  const grid = document.getElementById('fleetGrid');
+  const items = filter === 'all' ? fleet : fleet.filter(c => c.cat === filter);
+  grid.innerHTML = items.map(c => `
+    <div class="car-card">
+      <div class="car-img">
+        <span class="car-badge ${c.badgeClass}">${c.badge}</span>
+        ${c.emoji}
+      </div>
+      <div class="car-body">
+        <div class="car-name">${c.name}</div>
+        <div class="car-type">${c.type}</div>
+        <div class="car-specs">
+          <div class="car-spec">👥 ${c.seats} Seats</div>
+          <div class="car-spec">⛽ ${c.fuel}</div>
+          <div class="car-spec">⚙️ ${c.trans}</div>
+          <div class="car-spec">🛣️ ${c.km} km/l</div>
+        </div>
+        <div class="car-footer">
+          <div class="car-price">₹${c.price.toLocaleString()}<small>/day</small></div>
+          <button class="btn-book" onclick="bookCar('${c.name}')">Book Now</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterFleet(el, cat) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderFleet(cat);
+}
+
+function renderTestimonials() {
+  document.getElementById('testiGrid').innerHTML = testimonials.map(t => `
+    <div class="testi-card">
+      <div class="testi-stars">${t.stars}</div>
+      <div class="testi-text">"${t.text}"</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:${t.color}">${t.init}</div>
+        <div><div class="testi-name">${t.name}</div><div class="testi-loc">${t.loc}</div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFAQ() {
+  document.getElementById('faqWrap').innerHTML = faqs.map((f,i) => `
+    <div class="faq-item" id="faq${i}">
+      <div class="faq-q" onclick="toggleFAQ(${i})">
+        ${f.q}
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+    </div>
+  `).join('');
+}
+
+function toggleFAQ(i) {
+  const el = document.getElementById('faq'+i);
+  el.classList.toggle('open');
+}
+
+// Counter animation
+function animateCounters() {
+  const targets = [{id:'c1',val:100,suf:'+'},{id:'c2',val:5000,suf:'+'},{id:'c3',val:8,suf:''},{id:'c4',val:12000,suf:'+'}];
+  targets.forEach(t => {
+    let current = 0;
+    const step = t.val / 60;
+    const timer = setInterval(() => {
+      current = Math.min(current + step, t.val);
+      document.getElementById(t.id).textContent = Math.floor(current).toLocaleString() + t.suf;
+      if (current >= t.val) clearInterval(timer);
+    }, 20);
+  });
+}
+
+// Intersection Observer for counters
+const counterSection = document.querySelector('.counter-section');
+let counted = false;
+const obs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !counted) { counted=true; animateCounters(); }
+});
+obs.observe(counterSection);
+
+// Navbar scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+function showLogin() {
+  const m = document.getElementById('loginModal');
+  m.style.display = 'flex';
+}
+
+function searchCars() {
+  document.getElementById('fleet').scrollIntoView({behavior:'smooth'});
+}
+
+function bookCar(name) {
+  showLogin();
+}
+
+// Init
+renderFleet();
+renderTestimonials();
+renderFAQ();
+</script>
+</body>
+</html>
